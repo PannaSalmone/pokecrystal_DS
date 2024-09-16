@@ -1,4 +1,4 @@
-DEF MAP_NAME_SIGN_START EQU $60
+DEF MAP_NAME_SIGN_START EQU $c0
 
 InitMapNameSign::
 	xor a
@@ -41,8 +41,7 @@ InitMapNameSign::
 
 ; Display for 60 frames
 	ld a, 60
-	ld [wLandmarkSignTimer], a
-	call LoadMapNameSignGFX
+	ld [wLandmarkSignTimer], a	
 	call InitMapNameFrame
 	farcall HDMATransfer_OnlyTopFourRows
 	ret
@@ -122,13 +121,6 @@ PlaceMapNameSign::
 	ldh [hWY], a
 	xor a
 	ldh [hLCDCPointer], a
-	ret
-
-LoadMapNameSignGFX:
-	ld de, MapEntryFrameGFX
-	ld hl, vTiles2 tile MAP_NAME_SIGN_START
-	lb bc, BANK(MapEntryFrameGFX), 14
-	call Get2bpp
 	ret
 
 InitMapNameFrame:

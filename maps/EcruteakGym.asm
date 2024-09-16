@@ -388,8 +388,8 @@ EcruteakGym_MapEvents:
 	db 0, 0 ; filler
 
 	def_warp_events
-	warp_event  4, 17, ECRUTEAK_CITY, 10
-	warp_event  5, 17, ECRUTEAK_CITY, 10
+	warp_event  4, 17, ECRUTEAK_CITY, 8
+	warp_event  5, 17, ECRUTEAK_CITY, 8
 	warp_event  4, 14, ECRUTEAK_GYM, 4
 	warp_event  2,  4, ECRUTEAK_GYM, 3
 	warp_event  3,  4, ECRUTEAK_GYM, 3

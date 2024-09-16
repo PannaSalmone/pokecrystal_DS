@@ -1,6 +1,6 @@
 ; MapGroupRoofs values; Roofs indexes
 	const_def
-	const ROOF_NEW_BARK  ; 0
+	;const ROOF_NEW_BARK  ; 0 now merged with violet roof cause maps are connected
 	const ROOF_VIOLET    ; 1
 	const ROOF_AZALEA    ; 2
 	const ROOF_OLIVINE   ; 3
@@ -30,20 +30,21 @@ MapGroupRoofs:
 	db -1             ; 16
 	db -1             ; 17
 	db -1             ; 18
-	db ROOF_NEW_BARK  ; 19 (Silver Cave)
+	db ROOF_VIOLET  ; 19 (Silver Cave)
 	db -1             ; 20
 	db -1             ; 21
 	db ROOF_OLIVINE   ; 22 (Cianwood)
 	db -1             ; 23
-	db ROOF_NEW_BARK  ; 24 (New Bark)
+	db ROOF_VIOLET  ; 24 (New Bark)
 	db -1             ; 25
-	db ROOF_NEW_BARK  ; 26 (Cherrygrove)
+	db ROOF_VIOLET  ; 26 (Cherrygrove)
+	db -1             ; 27 (Tin tower shrine)
 	assert_table_length NUM_MAP_GROUPS + 1
 
 Roofs:
 ; entries correspond to ROOF_* constants
 	table_width ROOF_LENGTH * LEN_2BPP_TILE, Roofs
-INCBIN "gfx/tilesets/roofs/new_bark.2bpp"
+;INCBIN "gfx/tilesets/roofs/new_bark.2bpp"
 INCBIN "gfx/tilesets/roofs/violet.2bpp"
 INCBIN "gfx/tilesets/roofs/azalea.2bpp"
 INCBIN "gfx/tilesets/roofs/olivine.2bpp"

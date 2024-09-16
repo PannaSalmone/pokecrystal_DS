@@ -10,6 +10,7 @@
 	const GOLDENRODPOKECENTER1F_GRAMPS ; $0A
 	const GOLDENRODPOKECENTER1F_LASS
 	const GOLDENRODPOKECENTER1F_POKEFAN_F
+	const GOLDENRODPOKECENTER1F_CHANSEY
 
 GoldenrodPokecenter1F_MapScripts:
 	def_scene_scripts
@@ -434,6 +435,15 @@ GoldenrodPokecenter1FGameboyKidScript:
 
 GoldenrodPokecenter1FLassScript:
 	jumptextfaceplayer GoldenrodPokecenter1FLassText
+
+PccChansey:
+	faceplayer
+	opentext
+	writetext PccChanseyText
+	cry CHANSEY
+	waitbutton
+	closetext
+	end
 
 ;GoldenrodPokecenter1FPokefanF:
 ;	faceplayer
@@ -1159,6 +1169,10 @@ GoldenrodPokecenter1FPlayerGaveAwayTheEonMailText:
 	line "the EON MAIL."
 	done
 
+PccChanseyText:
+	text "CHANSEY: Seey!"
+	done
+
 GoldenrodPokecenter1F_MapEvents:
 	db 0, 0 ; filler
 
@@ -1211,3 +1225,4 @@ GoldenrodPokecenter1F_MapEvents:
 	 ; 5772C
 	object_event  4, 11, SPRITE_LASS, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 1, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, GoldenrodPokecenter1FLassScript, -1
 	;object_event 15, 12, SPRITE_POKEFAN_F, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, GoldenrodPokecenter1FPokefanF, -1
+	object_event 8, 7, SPRITE_CHANSEY, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, PccChansey, -1

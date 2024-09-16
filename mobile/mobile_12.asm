@@ -9,7 +9,7 @@ InitMobileProfile:
 	call z, InitCrystalData
 	call ClearBGPalettes
 	call LoadZipcodeWithUniversalFormat
-	call RetrieveZipcodeInfo
+
 	call DisableLCD
 	farcall Mobile22_Clear24FirstOAM
 	;farcall Mobile22_LoadMobileAdapterGFXIntoVRAM
@@ -94,26 +94,14 @@ InitMobileProfile:
 	bit 6, a
 	jr nz, .asm_48113
 	ld a, [wPlayerGender]
-	ld hl, Strings_484fb
+	ld hl, Strings_484fc
 	call GetNthString
 	ld d, h
 	ld e, l
-	if DEF(_CRYSTAL_AU)
-	hlcoord 14, 5 ; Default gender position in MOBILE menu
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 12, 5 ; Default gender position in MOBILE menu
-	else
-	hlcoord 12, 5 ; Default gender position in MOBILE menu
-	endc
+	hlcoord 11, 5 ; Default gender position in MOBILE menu
 	call PlaceString
 .asm_48113
-	if DEF(_CRYSTAL_AU)
-	hlcoord 13, 7 ; Default age position in MOBILE menu
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 11, 7 ; Default age position in MOBILE menu
-	else
-	hlcoord 12, 7 ; Default age position in MOBILE menu
-	endc
+	hlcoord 15, 7 ; Default age position in MOBILE menu
 	call Function487ec
 	ld a, [wPrefecture]
 	dec a
@@ -121,14 +109,9 @@ InitMobileProfile:
 	call GetNthString
 	ld d, h
 	ld e, l
-	if DEF(_CRYSTAL_AU)
 	hlcoord 19 - REGION_CODE_STRING_LENGTH, 9 ; Default Prefectures position in MOBILE menu
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 16 - REGION_CODE_STRING_LENGTH, 9 ; Default Prefectures position in MOBILE menu
-	else
-	hlcoord 17 - REGION_CODE_STRING_LENGTH, 9 ; Default Prefectures position in MOBILE menu
-	endc
 	call PlaceString
+	hlcoord 18 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
 	call DisplayZipCodeRightAlign
 	hlcoord 0, 14 ; 'Personal Info' box position
 	ld b, $2
@@ -137,7 +120,7 @@ InitMobileProfile:
 	hlcoord 1, 16 ; 'Personal Info' text position
 	ld de, MobileString_PersonalInfo
 	call PlaceString
-	call Mobile12_ClearBlankUserParameters
+	call Function48187
 	call WaitBGMap2
 	call SetPalettes
 	call StaticMenuJoypad
@@ -145,32 +128,6 @@ InitMobileProfile:
 	ld b, [hl]
 	push bc
 	jr asm_4815f
-
-RetrieveZipcodeInfo:
-	ld a, [wPrefecture]
-	dec a
-
-	; Country
-	ld hl, PrefectureToCountry
-	ld c, a
-	ld b, 0
-	add hl, bc
-	ld a, [hl]
-	ld [wZipcodeCountry], a
-
-	; Format
-	ld hl, PrefectureZipcodeFormat
-	add hl, bc ; HL contains the address of the format index.
-	ld a, [hl]
-	ld [wZipcodeFormat], a
-
-	; Length
-	ld hl, ZipcodeFormatLengths
-	ld c, a
-	add hl, bc
-	ld a, [hl]
-	ld [wZipcodeFormatLength], a
-	ret
 
 Function48157:
 	call ScrollingMenuJoypad
@@ -200,7 +157,7 @@ asm_4815f:
 	ld a, $ff
 	ret
 
-Mobile12_ClearBlankUserParameters:
+Function48187:
 	ld a, [wd479]
 	bit 1, a
 	jr nz, .asm_481f1
@@ -225,37 +182,19 @@ Mobile12_ClearBlankUserParameters:
 	bit 0, d
 	jr nz, .asm_481c1
 	lb bc, 1, 8
-	if DEF(_CRYSTAL_AU)
-	hlcoord 9, 5 ; Gender position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 10, 5 ; Gender position
-	else
-	hlcoord 8, 5 ; Gender position
-	endc
+	hlcoord 11, 5 ; Gender position
 	call ClearBox
 .asm_481c1
 	bit 1, d
 	jr nz, .asm_481ce
 	lb bc, 1, 8
-	if DEF(_CRYSTAL_AU)
 	hlcoord 11, 7 ; Age position ; Don't change
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 10, 7 ; Age position ; Don't change
-	else
-	hlcoord 7, 7 ; Age position ; Don't change
-	endc
 	call ClearBox
 .asm_481ce
 	bit 2, d
 	jr nz, .asm_481db
-	lb bc, 1, 8
-	if DEF(_CRYSTAL_AU)
+	lb bc, 2, 8
 	hlcoord 11, 9 ; prefecture position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 10, 9 ; prefecture position
-	else
-	hlcoord 10, 9 ; prefecture position
-	endc
 	call ClearBox
 .asm_481db
 	bit 3, d
@@ -263,14 +202,8 @@ Mobile12_ClearBlankUserParameters:
 	ld a, [wd479]
 	bit 0, a
 	jr nz, .asm_481f8
-	lb bc, 1, 9
-	if DEF(_CRYSTAL_AU)
-	hlcoord 9, 11 ; Zip code location
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 10, 11 ; Zip code location
-	else
-	hlcoord 10, 11 ; Zip code location
-	endc
+	lb bc, 1, 8
+	hlcoord 11, 11 ; Zip code location
 	call ClearBox
 	jr .asm_48201
 .asm_481f1
@@ -278,7 +211,7 @@ Mobile12_ClearBlankUserParameters:
 	bit 0, a
 	jr nz, .asm_48201
 .asm_481f8
-	hlcoord 9, 11 ; Position of 'Tell Later' after selecting
+	hlcoord 8, 11 ; Position of 'Tell Later' after selecting
 	ld de, .String_TellLater
 	call PlaceString
 .asm_48201
@@ -358,25 +291,6 @@ GenderPressed:
 	ld hl, MenuHeader_0x484f1
 	call LoadMenuHeader
 	call SetCursorParameters_Gender
-	if DEF(_CRYSTAL_AU)
-	hlcoord 13, 2 ; Gender menu position
-	ld b, $4
-	ld c, $5
-	call DisplayBlankGoldenBox
-	hlcoord 15, 4 ; Position of Male Gender string in Gender menu
-	ld de, String_484fb
-	call PlaceString
-	hlcoord 15, 6 ; Position of Female Gender string in Gender menu
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 11, 2 ; Gender menu position
-	ld b, $4
-	ld c, $7
-	call DisplayBlankGoldenBox
-	hlcoord 13, 4 ; Position of Male Gender string in Gender menu
-	ld de, String_484fb
-	call PlaceString
-	hlcoord 13, 6 ; Position of Female Gender string in Gender menu
-	else
 	hlcoord 12, 2 ; Gender menu position
 	ld b, $4
 	ld c, $6
@@ -384,8 +298,7 @@ GenderPressed:
 	hlcoord 14, 4 ; Position of Male Gender string in Gender menu
 	ld de, String_484fb
 	call PlaceString
-	hlcoord 14, 6 ; Position of Female Gender string in Gender menu	
-	endc
+	hlcoord 14, 6 ; Position of Female Gender string in Gender menu
 	ld de, String_484ff
 	call PlaceString
 	call WaitBGMap
@@ -399,7 +312,7 @@ GenderPressed:
 	jp z, ReturnToMobileProfileMenu
 	ld hl, wMenuCursorY
 	ld a, [hl]
-	ld hl, Strings_484fb
+	ld hl, Strings_484fc
 	cp $1
 	jr z, .asm_482ed
 .asm_482e1
@@ -415,13 +328,7 @@ GenderPressed:
 .asm_482f1
 	ld d, h
 	ld e, l
-	if DEF(_CRYSTAL_AU)
-	hlcoord 13, 5 ; Gender position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 11, 5 ; Gender position
-	else
-	hlcoord 12, 5 ; Gender position
-	endc
+	hlcoord 14, 5 ; Gender position
 	call PlaceString
 	ld a, [wMobileProfileParametersFilled]
 	set 0, a
@@ -477,12 +384,12 @@ RegionCodePressed:
 	ldh a, [hJoyPressed]
 	bit A_BUTTON_F, a
 	jr z, .asm_48377
-	call SavePrefectureAndDisplayIt
+	call DisplayRegionCodesList
 	ld a, [wMobileProfileParametersFilled]
 	set 2, a
 	ld [wMobileProfileParametersFilled], a
 .asm_48377
-	call Mobile12_ClearBlankUserParameters
+	call Function48187
 	farcall Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap
 	jp ReturnToMobileProfileMenu
 
@@ -528,25 +435,12 @@ RegionCodeEdit_LeftRight:
 	pop bc
 	ret
 
-SavePrefectureAndDisplayIt:
+DisplayRegionCodesList:
 	ld hl, wScrollingMenuCursorPosition
 	ld a, [hl]
 	inc a
 	ld [wPrefecture], a
-	
-	ld a, [wZipcodeCountry]
-	ld e, a
-	call RetrieveZipcodeInfo
-	ld a, [wZipcodeCountry]
-	cp e
-	jr z, .zipcode_reset_managed ; If the previous and current zipcode formats match, there's no need to reset the zipcode.	
-
-	; We simulate a press on Tell Later.
-	call TellNowTellLaterMenu.pressed_tell_later
-
-.zipcode_reset_managed
-	ld hl, wScrollingMenuCursorPosition
-	ld a, [hl]
+	dec a
 	ld b, a
 	ld hl, Prefectures
 .outer_loop
@@ -565,25 +459,19 @@ SavePrefectureAndDisplayIt:
 	ld e, l
 	ld b, $2
 	ld c, $8
-	if DEF(_CRYSTAL_AU)
 	hlcoord 11, 8 ; ??? Clears the surrounding tiles when prefecture is selected, needs to be moved with preferectures
 	call ClearBox
 	hlcoord 19 - REGION_CODE_STRING_LENGTH, 9 ; Prefectures position when selected
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 9, 8 ; ??? Clears the surrounding tiles when prefecture is selected, needs to be moved with preferectures
-	call ClearBox
-	hlcoord 16 - REGION_CODE_STRING_LENGTH, 9 ; Prefectures position when selected
-	else
-	hlcoord 11, 8 ; ??? Clears the surrounding tiles when prefecture is selected, needs to be moved with preferectures
-	call ClearBox
-	hlcoord 17 - REGION_CODE_STRING_LENGTH, 9 ; Prefectures position when selected
-	endc
 	call PlaceString
 	ret
 
 Function483e8:
 	push de
+if DEF(_CRYSTAL_AU)
+	ld hl, PrefecturesScrollList
+else
 	ld hl, Prefectures
+endc
 	ld a, [wMenuSelection]
 	cp $ff
 	jr nz, .asm_483f8
@@ -610,7 +498,7 @@ Function483e8:
 	ret
 
 ReturnToMobileProfileMenu:
-	call Mobile12_ClearBlankUserParameters
+	call Function48187
 	call ClearMobileProfileBottomTextBox
 	hlcoord 1, 16
 	ld de, MobileString_PersonalInfo
@@ -635,64 +523,151 @@ ReturnToMobileProfileMenu:
 	call ClearBox
 	jp Function48157
 
-; Inputs: char pool index in D, char index (within char pool) in A, screen tile coord in HL.
-; Doesn't clobber B.
+; Inputs: char pool index in A, screen tile coord in HL.
 Mobile12_Index2CharDisplay:
-	call Mobile12_Index2Char
-	ld [hl], a
-	ret
-
-; Inputs: char pool index in D, char index (within char pool) in A.
-; Doesn't clobber B.
-Mobile12_Index2Char:
-	push hl
 	push de
+	push hl
 
 	push af
-	ld a, d
-	call GetCurCharpoolAddress
-	pop af
-
-	ld e, a ; A is the char index within the current char pool, given as a parameter of this function.
+	ld a, l
+	hlcoord 18 - ZIPCODE_LENGTH, 11
+	push de
+	ld e, b
+	ld d, 0
 	add hl, de
 	pop de
+
+	; Zip Code Location. Note that wTilemap is added to it. wTilemap is "align 8" ($X00) + $A0. "18 - ZIPCODE_LENGTH, 11" is $E7. Which makes $C587.
+	; The last zipcode char would be stored at address $C58E. The last byte doesn't overflow or underflow between the first and the last chat pos, so we can subtract those to get the index in the string of the current char.
+	sub l ; A now contains the char index in the zipcode string between 0 and ZIPCODE_LENGTH.
+	add a ; We double A because Zipcode_CharPools is a list of dw (2 bytes).
+	ld e, a
+	ld d, 0
+	ld hl, Zipcode_CharPools
+	add hl, de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	pop af
+	ld e, a
+	add hl, de
 	ld a, [hl]
 	pop hl
+	ld [hl], a
+	pop de
 	ret
+
+Zipcode_CharPools:
+DEF N = ZIPCODE_LENGTH
+IF N > 8
+  FAIL "make the STRSUB longer"
+ENDC
+DEF IDX = 0
+REPT N
+DEF S EQUS STRCAT("Zipcode_CharPoolForStringIndex", STRSUB("01234567", IDX+1, 1))
+	dw S
+PURGE S
+DEF IDX = IDX + 1
+ENDR
+
+Zipcode_CharPoolForStringIndex0:
+if DEF(_CRYSTAL_AU)
+	db "0123456789"
+
+Zipcode_CharPoolForStringIndex1:
+	db "0123456789"
+
+Zipcode_CharPoolForStringIndex2:
+	db "0123456789"
+
+Zipcode_CharPoolForStringIndex3:
+	db "0123456789"
+
+elif DEF(_CRYSTAL_EU)
+	db "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex1:
+	db "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex2:
+	db "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex3:
+	db " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex4:
+	db " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex5:
+	db " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex6:
+	db " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+else ; US
+	db "0123456789ABCEGHJKLMNPRSTVXY"
+
+Zipcode_CharPoolForStringIndex1:
+	db "0123456789"
+
+Zipcode_CharPoolForStringIndex2:
+	db "0123456789ABCEGHJKLMNPRSTVWXYZ"
+
+Zipcode_CharPoolForStringIndex3:
+	db "0123456789"
+
+Zipcode_CharPoolForStringIndex4:
+	db "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+Zipcode_CharPoolForStringIndex5:
+	db " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+endc
+
+Zipcode_CharPoolsLength:
+DEF N = ZIPCODE_LENGTH
+DEF IDX = 0
+REPT N - 1
+DEF S EQUS STRCAT("LOW(Zipcode_CharPoolForStringIndex", STRSUB("01234567", IDX+2, 1))
+DEF T EQUS STRCAT("- Zipcode_CharPoolForStringIndex", STRSUB("01234567", IDX+1, 1))
+	db S T ) / 1
+PURGE S
+PURGE T
+DEF IDX = IDX + 1
+ENDR
+
+DEF N = ZIPCODE_LENGTH - 1
+DEF S EQUS STRCAT("LOW(Zipcode_CharPoolsLength - Zipcode_CharPoolForStringIndex", STRSUB("01234567", N+1, 1))
+	db S ) / 1
 
 MobileProfileString:         db "  Mobile Profile@"
 MobileString_Gender:         db "Gender@"
 MobileString_Age:            db "Age@"
 MobileString_Address:        db "Address@"
-	if DEF(_CRYSTAL_AU)
+if DEF(_CRYSTAL_AU)
 MobileString_ZipCode:        db "Postcode@"
-	elif DEF(_CRYSTAL_EU)
+elif DEF(_CRYSTAL_EU)
 MobileString_ZipCode:        db "Postcode@"
-	else
+else
 MobileString_ZipCode:        db "Zip Code@"
-	endc
+endc
 MobileString_OK:             db "OK@"
 MobileString_ProfileChanged: db "Profile Changed@"
 MobileDesc_Gender:           db "Boy or girl?@"
 MobileDesc_Age:              db "How old are you?@"
 MobileDesc_Address:          db "Where do you live?@"
-	if DEF(_CRYSTAL_AU)
+if DEF(_CRYSTAL_AU)
 MobileDesc_ZipCode:          db "Your post code?@"
-	elif DEF(_CRYSTAL_EU)
+elif DEF(_CRYSTAL_EU)
 MobileDesc_ZipCode:          db "Your post code?@"
-	else
+else
 MobileDesc_ZipCode:          db "Your zip code?@"
-	endc
+endc
 
 MenuHeader_0x484f1:
 	db MENU_BACKUP_TILES ; flags
-if DEF(_CRYSTAL_AU)
-	menu_coords 9, 2, SCREEN_WIDTH - 1, 7 ; For clearing the Gender box
-elif DEF(_CRYSTAL_EU)
 	menu_coords 10, 2, SCREEN_WIDTH - 1, 7 ; For clearing the Gender box
-else
-	menu_coords 10, 2, SCREEN_WIDTH - 1, 7 ; For clearing the Gender box
-endc
 	dw MenuData_0x484f9
 	db 1 ; default option
 
@@ -700,48 +675,23 @@ MenuData_0x484f9:
 	db STATICMENU_CURSOR | STATICMENU_WRAP ; flags
 	db 2 ; items
 Strings_484fb:
-String_484fb: db "Boy @"
+String_484fb: db "Boy@"
 String_484ff: db "Girl@"
+Strings_484fc:
+String_484fc: db " Boy@"
+String_48500: db "Girl@"
 
-	if DEF(_CRYSTAL_AU)
 MenuHeader_0x48504:
 	db MENU_BACKUP_TILES ; flags
 	menu_coords 16 - REGION_CODE_STRING_LENGTH, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 ; For clearing the Address Box
 
 MenuHeader_0x48509:
 	db MENU_BACKUP_TILES ; flags
-	menu_coords 10, 5, SCREEN_WIDTH - 1, 8 ; For clearing the Age Box
-
-MenuHeader_ZipCodeEditBox:
-	if DEF(_CRYSTAL_AU)
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 16 - ZIPCODE_LENGTH, 10, SCREEN_WIDTH - 1, TEXTBOX_Y - 0 ; For clearing the Zip Code box
-	elif DEF(_CRYSTAL_EU)
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 19 - ZIPCODE_LENGTH, 10, SCREEN_WIDTH - 1, TEXTBOX_Y - 0 ; For clearing the Zip Code box
-	else
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 18 - ZIPCODE_LENGTH, 10, SCREEN_WIDTH - 1, TEXTBOX_Y - 0 ; For clearing the Zip Code box
-	endc
-	;Bounding of left side ; bounding of top ; bounding of right side ; bounding of bottom
-
-MenuHeader_0x48513:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 17 - REGION_CODE_STRING_LENGTH, 1, 18, 12 ; The placement of the text in the address box
-	dw MenuData_0x4851b
-	db 1 ; default option
-	elif DEF(_CRYSTAL_EU)
-MenuHeader_0x48504:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 16 - REGION_CODE_STRING_LENGTH, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 ; For clearing the Address Box
-
-MenuHeader_0x48509:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 10, 5, SCREEN_WIDTH - 1, 8 ; For clearing the Age Box
+	menu_coords 10, 5, SCREEN_WIDTH - 1 + ZIPCODE_FRAME_RIGHT_MARGIN, 8 ; For clearing the Age Box
 
 MenuHeader_ZipCodeEditBox:
 	db MENU_BACKUP_TILES ; flags
-	menu_coords 18 - ZIPCODE_LENGTH, 10, SCREEN_WIDTH - 1, TEXTBOX_Y - 0 ; For clearing the Zip Code box
+	menu_coords 17 - ZIPCODE_LENGTH, 10, SCREEN_WIDTH - 1 + ZIPCODE_FRAME_RIGHT_MARGIN, TEXTBOX_Y - 0 ; For clearing the Zip Code box
 
 	;Bounding of left side ; bounding of top ; bounding of right side ; bounding of bottom
 
@@ -750,27 +700,6 @@ MenuHeader_0x48513:
 	menu_coords 17 - REGION_CODE_STRING_LENGTH, 1, 18, 12 ; The placement of the text in the address box
 	dw MenuData_0x4851b
 	db 1 ; default option
-	else
-MenuHeader_0x48504:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 16 - REGION_CODE_STRING_LENGTH, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 ; For clearing the Address Box
-
-MenuHeader_0x48509:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 10, 5, SCREEN_WIDTH - 1, 8 ; For clearing the Age Box
-
-MenuHeader_ZipCodeEditBox:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 18 - ZIPCODE_LENGTH, 10, SCREEN_WIDTH - 1, TEXTBOX_Y - 0 ; For clearing the Zip Code box
-
-	;Bounding of left side ; bounding of top ; bounding of right side ; bounding of bottom
-
-MenuHeader_0x48513:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 17 - REGION_CODE_STRING_LENGTH, 1, 18, 12 ; The placement of the text in the address box
-	dw MenuData_0x4851b
-	db 1 ; default option
-	endc
 
 MenuData_0x4851b:
 	db SCROLLINGMENU_DISPLAY_ARROWS | SCROLLINGMENU_ENABLE_RIGHT | SCROLLINGMENU_ENABLE_LEFT | SCROLLINGMENU_CALL_FUNCTION1_CANCEL ; flags
@@ -789,6 +718,168 @@ rept NUM_REGION_CODES - 1 ; The number of locations in the prefectures list (-1 
 	DEF x = x + 1
 endr
 	db -1
+
+Prefectures: ; Some names shortened to fit, check for official initials later.
+if DEF(_CRYSTAL_AU)
+	db "AU-ACT@"      ; Australian Capital Territory
+	db "AU-NSW@"      ; New South Wales
+	db " AU-NT@"       ; Northern Territory
+	db "AU-QLD@"      ; Queensland
+	db " AU-SA@"       ; South Australia
+	db "AU-TAS@"      ; Tasmania
+	db "AU-VIC@"      ; Victoria
+	db " AU-WA@"       ; Western Australia
+	db "NZ-AUK@"      ; Auckland
+	db "NZ-BOP@"      ; Bay of Plenty
+	db "NZ-CAN@"      ; Canterbury
+	db "NZ-CIT@"      ; Chatham Islands Territory
+	db "NZ-GIS@"      ; Gisborne
+	db "NZ-HKB@"      ; Hawke's Bay
+	db "NZ-MBH@"      ; Marlborough
+	db "NZ-MWT@"      ; Manawatu-Wanganui
+	db "NZ-NSN@"      ; Nelson
+	db "NZ-NTL@"      ; Northland
+	db "NZ-OTA@"      ; Otago
+	db "NZ-STL@"      ; Southland
+	db "NZ-TAS@"      ; Tasman
+	db "NZ-TKI@"      ; Taranaki
+	db "NZ-WGN@"      ; Wellington
+	db "NZ-WKO@"      ; Waikato
+	db "NZ-WTC@"      ; West Coast
+
+PrefecturesScrollList: ; Quick and dirty solution for the margin offset.
+	db "AU-NSW@"      ; New South Wales
+	db "AU-QLD@"      ; Queensland	
+	db "AU-SA@"       ; South Australia	
+	db "AU-TAS@"      ; Tasmania	
+	db "AU-VIC@"      ; Victoria	
+	db "AU-WA@"       ; Western Australia	
+	db "AU-ACT@"      ; Australian Capital Territory
+	db "AU-NT@"       ; Northern Territory
+	db "NZ-AUK@"      ; Auckland
+	db "NZ-BOP@"      ; Bay of Plenty
+	db "NZ-CAN@"      ; Canterbury
+	db "NZ-CIT@"      ; Chatham Islands Territory
+	db "NZ-GIS@"      ; Gisborne
+	db "NZ-WGN@"      ; Wellington	
+	db "NZ-HKB@"      ; Hawke's Bay
+	db "NZ-MWT@"      ; Manawatu-Wanganui	
+	db "NZ-MBH@"      ; Marlborough
+	db "NZ-NSN@"      ; Nelson
+	db "NZ-NTL@"      ; Northland
+	db "NZ-OTA@"      ; Otago
+	db "NZ-STL@"      ; Southland
+	db "NZ-TKI@"      ; Taranaki	
+	db "NZ-TAS@"      ; Tasman
+	db "NZ-WKO@"      ; Waikato
+LastPrefecture: db "NZ-WTC@"      ; West Coast
+
+elif DEF(_CRYSTAL_EU)
+	db "EU-AD@"     ; Andorra
+	db "EU-AL@"     ; Albania
+	db "EU-AT@"     ; Austria
+	db "EU-BA@"     ; Bosnia and Herzegovina
+	db "EU-BE@"     ; Belgium
+	db "EU-BG@"     ; Bulgaria
+	db "EU-BY@"     ; Belarus
+	db "EU-CH@"     ; Switzerland
+	db "EU-CZ@"     ; Czech Republic
+	db "EU-DE@"     ; Germany
+	db "EU-DK@"     ; Denmark
+	db "EU-EE@"     ; Estonia
+	db "EU-ES@"     ; Spain
+	db "EU-FI@"     ; Finland
+	db "EU-FR@"     ; France
+	db "EU-GB@"     ; United Kingdom
+	db "EU-GR@"     ; Greece
+	db "EU-HR@"     ; Croatia
+	db "EU-HU@"     ; Hungary
+	db "EU-IE@"     ; Ireland
+	db "EU-IS@"     ; Iceland
+	db "EU-IT@"     ; Italy
+	db "EU-LI@"     ; Liechtenstein
+	db "EU-LT@"     ; Lithuania
+	db "EU-LU@"     ; Luxembourg
+	db "EU-LV@"     ; Latvia
+	db "EU-MD@"     ; Moldova
+	db "EU-MT@"     ; Malta
+	db "EU-NL@"     ; Netherlands
+	db "EU-NO@"     ; Norway
+	db "EU-PL@"     ; Poland
+	db "EU-PT@"     ; Portugal
+	db "EU-RO@"     ; Romania
+	db "EU-RS@"     ; Serbia
+	db "EU-RU@"     ; Russian Federation
+	db "EU-SE@"     ; Sweden
+	db "EU-SI@"     ; Slovenia
+	db "EU-SK@"     ; Slovakia
+	db "EU-SM@"     ; San Marino
+LastPrefecture: db "EU-UA@"     ; Ukraine
+else
+	db	"US-AL@"  	;Alabama
+	db	"US-AK@"  	;Alaska
+	db	"US-AZ@"  	;Arizona
+	db	"US-AR@"  	;Arkansas
+	db	"US-CA@"  	;California
+	db	"US-CO@"  	;Colorado
+	db	"US-CT@"  	;Connecticut
+	db	"US-DE@"  	;Delaware
+	db	"US-FL@"  	;Florida
+	db	"US-GA@"  	;Georgia
+	db	"US-HI@"  	;Hawaii
+	db	"US-ID@"  	;Idaho
+	db	"US-IL@"  	;Illinois
+	db	"US-IN@"  	;Indiana
+	db	"US-IA@"  	;Iowa
+	db	"US-KS@"  	;Kansas
+	db	"US-KY@"  	;Kentucky
+	db	"US-LA@"  	;Louisiana
+	db	"US-ME@"  	;Maine
+	db	"US-MD@"  	;Maryland
+	db	"US-MA@"  	;Massachusetts
+	db	"US-MI@"  	;Michigan
+	db	"US-MN@"  	;Minnesota
+	db	"US-MS@"  	;Mississippi
+	db	"US-MO@"  	;Missouri
+	db	"US-MT@"  	;Montana
+	db	"US-NE@"  	;Nebraska
+	db	"US-NV@"  	;Nevada
+	db	"US-NH@"  	;New_Hampshire
+	db	"US-NJ@"  	;New_Jersey
+	db	"US-NM@"  	;New_Mexico
+	db	"US-NY@"  	;New_York
+	db	"US-NC@"  	;North_Carolina
+	db	"US-ND@"  	;North_Dakota
+	db	"US-OH@"  	;Ohio
+	db	"US-OK@"  	;Oklahoma
+	db	"US-OR@"  	;Oregon
+	db	"US-PA@"  	;Pennsylvania
+	db	"US-RI@"  	;Rhode_Island
+	db	"US-SC@"  	;South_Carolina
+	db	"US-SD@"  	;South_Dakota
+	db	"US-TN@"  	;Tennessee
+	db	"US-TX@"  	;Texas
+	db	"US-UT@"  	;Utah
+	db	"US-VT@"  	;Vermont
+	db	"US-VA@"  	;Virginia
+	db	"US-WA@"  	;Washington
+	db	"US-WV@"  	;West_Virginia
+	db	"US-WI@"  	;Wisconsin
+	db	"US-WY@"  	;Wyoming
+	db	"CA-AB@"  	;Alberta
+	db	"CA-BC@"  	;British_Columbia
+	db	"CA-MB@"  	;Manitoba
+	db	"CA-NB@"  	;New_Brunswick
+	db	"CA-NL@"  	;Newfoundland_and_Labrador
+	db	"CA-NS@"  	;Nova_Scotia
+	db	"CA-ON@"  	;Ontario	
+	db	"CA-PE@"  	;Prince_Edward_Island	
+	db	"CA-QC@"  	;Quebec	
+	db	"CA-SK@"  	;Saskatchewan	
+	db	"CA-NT@"  	;Northwest_Territories
+	db	"CA-NU@"  	;Nunavut
+LastPrefecture: db	"CA-YT@"  	;Yukon
+endc
 
 DisplayInitializedMobileProfileLayout: ; Clears the 4 top lines, displays the "Mobile Profile" title, and displays an empty golden box.
 	ld c, 7
@@ -918,13 +1009,7 @@ SetCursorParameters_Gender:
 	ld hl, w2DMenuCursorInitY
 	ld a, 4
 	ld [hli], a
-	if DEF(_CRYSTAL_AU)
-	ld a, 14 ; x axis position of the gender cursor
-	elif DEF(_CRYSTAL_EU)
-	ld a, 12 ; x axis position of the gender cursor
-	else
 	ld a, 13 ; x axis position of the gender cursor
-	endc
 	ld [hli], a ; init x
 	ld a, 2
 	ld [hli], a ; num rows
@@ -972,10 +1057,9 @@ AgePressed:
 	push af
 	ld a, $1
 	ldh [hInMenu], a
-	if DEF(_CRYSTAL_AU)
-	hlcoord 12, 6 ; Age menu position
+	hlcoord 14, 6 ; Age menu position
 	ld b, $1
-	ld c, $6
+	ld c, $4
 	call DisplayBlankGoldenBox
 	call WaitBGMap
 	ld a, [wAge]
@@ -983,71 +1067,20 @@ AgePressed:
 	jr z, .asm_487ab
 	cp $64
 	jr z, .asm_487b2
-	hlcoord 14, 6 ; Age menu up arrow position
+	hlcoord 16, 6 ; Age menu up arrow position
 	ld [hl], $10
-	hlcoord 14, 8 ; Age menu down arrow position (probably)
+	hlcoord 16, 8 ; Age menu down arrow position (probably)
 	ld [hl], $11
 	jr .asm_487b7
 .asm_487ab
-	hlcoord 14, 6 ; Age menu up arrow position
+	hlcoord 16, 6 ; Age menu up arrow position
 	ld [hl], $10
 	jr .asm_487b7
 .asm_487b2
-	hlcoord 14, 8 ; Age menu down arrow position (probably)
+	hlcoord 16, 8 ; Age menu down arrow position (probably)
 	ld [hl], $11
 .asm_487b7
-	hlcoord 13, 7 ; Age position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 10, 6 ; Age menu position
-	ld b, $1
-	ld c, $8
-	call DisplayBlankGoldenBox
-	call WaitBGMap
-	ld a, [wAge]
-	and a
-	jr z, .asm_487ab
-	cp $64
-	jr z, .asm_487b2
-	hlcoord 12, 6 ; Age menu up arrow position
-	ld [hl], $10
-	hlcoord 12, 8 ; Age menu down arrow position (probably)
-	ld [hl], $11
-	jr .asm_487b7
-.asm_487ab
-	hlcoord 12, 6 ; Age menu up arrow position
-	ld [hl], $10
-	jr .asm_487b7
-.asm_487b2
-	hlcoord 12, 8 ; Age menu down arrow position (probably)
-	ld [hl], $11
-.asm_487b7
-	hlcoord 11, 7 ; Age position
-	else
-	hlcoord 11, 6 ; Age menu position
-	ld b, $1
-	ld c, $7
-	call DisplayBlankGoldenBox
-	call WaitBGMap
-	ld a, [wAge]
-	and a
-	jr z, .asm_487ab
-	cp $64
-	jr z, .asm_487b2
-	hlcoord 13, 6 ; Age menu up arrow position
-	ld [hl], $10
-	hlcoord 13, 8 ; Age menu down arrow position (probably)
-	ld [hl], $11
-	jr .asm_487b7
-.asm_487ab
-	hlcoord 13, 6 ; Age menu up arrow position
-	ld [hl], $10
-	jr .asm_487b7
-.asm_487b2
-	hlcoord 13, 8 ; Age menu down arrow position (probably)
-	ld [hl], $11
-.asm_487b7
-	hlcoord 12, 7 ; Age position
-	endc
+	hlcoord 15, 7 ; Age position
 	call Function487ec
 	ld c, 10
 	call DelayFrames
@@ -1066,13 +1099,7 @@ AgePressed:
 .asm_487da
 	ld a, [wAge]
 	call ExitMenu
-	if DEF(_CRYSTAL_AU)
-	hlcoord 13, 7 ; Age position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 11, 7 ; Age position
-	else
-	hlcoord 12, 7 ; Age position
-	endc
+	hlcoord 15, 7 ; Age position
 	call Function487ec
 	pop af
 	ldh [hInMenu], a
@@ -1170,76 +1197,28 @@ Function4880e:
 	cp $64
 	jr z, .asm_48898
 	jr z, .asm_488a7
-	if DEF(_CRYSTAL_AU)
-	hlcoord 14, 6 ; Age menu up arrow position
+	hlcoord 16, 6 ; Age menu up arrow position
 	ld [hl], $10
-	hlcoord 14, 8 ; Age menu down arrow position
+	hlcoord 16, 8 ; Age menu down arrow position
 	ld [hl], $11
 	jr .asm_488a7
 .asm_48887
-	hlcoord 12, 6 ; Age menu up arrow position when using D-Pad
-	ld b, $1
-	ld c, $6
-	call DisplayBlankGoldenBox
 	hlcoord 14, 6 ; Age menu up arrow position when using D-Pad
+	ld b, $1
+	ld c, $4
+	call DisplayBlankGoldenBox
+	hlcoord 16, 6 ; Age menu up arrow position when using D-Pad
 	ld [hl], $10
 	jr .asm_488a7
 .asm_48898
-	hlcoord 12, 6 ; Age menu up arrow position when using D-Pad
+	hlcoord 14, 6 ; Age menu up arrow position when using D-Pad
 	ld b, $1
-	ld c, $6
+	ld c, $4
 	call DisplayBlankGoldenBox
-	hlcoord 14, 8 ; Age menu down arrow position when using D-Pad
+	hlcoord 16, 8 ; Age menu down arrow position when using D-Pad
 	ld [hl], $11
 .asm_488a7
-	hlcoord 13, 7 ; Age position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 12, 6 ; Age menu up arrow position
-	ld [hl], $10
-	hlcoord 12, 8 ; Age menu down arrow position
-	ld [hl], $11
-	jr .asm_488a7
-.asm_48887
-	hlcoord 10, 6 ; Age menu up arrow position when using D-Pad
-	ld b, $1
-	ld c, $8
-	call DisplayBlankGoldenBox
-	hlcoord 12, 6 ; Age menu up arrow position when using D-Pad
-	ld [hl], $10
-	jr .asm_488a7
-.asm_48898
-	hlcoord 10, 6 ; Age menu up arrow position when using D-Pad
-	ld b, $1
-	ld c, $8
-	call DisplayBlankGoldenBox
-	hlcoord 12, 8 ; Age menu down arrow position when using D-Pad
-	ld [hl], $11
-.asm_488a7
-	hlcoord 11, 7 ; Age position
-	else
-	hlcoord 13, 6 ; Age menu up arrow position
-	ld [hl], $10
-	hlcoord 13, 8 ; Age menu down arrow position
-	ld [hl], $11
-	jr .asm_488a7
-.asm_48887
-	hlcoord 11, 6 ; Age menu up arrow position when using D-Pad
-	ld b, $1
-	ld c, $7
-	call DisplayBlankGoldenBox
-	hlcoord 13, 6 ; Age menu up arrow position when using D-Pad
-	ld [hl], $10
-	jr .asm_488a7
-.asm_48898
-	hlcoord 11, 6 ; Age menu up arrow position when using D-Pad
-	ld b, $1
-	ld c, $7
-	call DisplayBlankGoldenBox
-	hlcoord 13, 8 ; Age menu down arrow position when using D-Pad
-	ld [hl], $11
-.asm_488a7
-	hlcoord 12, 7 ; Age position
-	endc
+	hlcoord 15, 7 ; Age position
 	call Function487ec
 	call WaitBGMap
 	ld a, $1
@@ -1273,16 +1252,8 @@ ZipCodePressed:
 	call TellNowTellLaterMenu
 	jp c, ReturnToMobileProfileMenu
 
-	if DEF(_CRYSTAL_AU)
-	hlcoord 8, 12 ; Clearing the potential "Tell Later" text.
+	hlcoord 8, 11 ; Clearing the potential "Tell Later" text.
 	lb bc, 1, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 8, 12 ; Clearing the potential "Tell Later" text.
-	lb bc, 1, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-	else
-	hlcoord 8, 12 ; Clearing the potential "Tell Later" text.
-	lb bc, 1, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-	endc
 	call ClearBox
 
 	ld hl, MenuHeader_ZipCodeEditBox
@@ -1293,25 +1264,12 @@ ZipCodePressed:
 	ld a, TRUE
 	ldh [hInMenu], a
 
-	if DEF(_CRYSTAL_AU)
-	hlcoord 16 - ZIPCODE_LENGTH, 10
+	hlcoord 17 - ZIPCODE_LENGTH, 10
 	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
+	ld c, ZIPCODE_LENGTH + ZIPCODE_FRAME_RIGHT_MARGIN; Zip Code Menu width
 	call DisplayBlankGoldenBox
-	hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip Code Position
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	call DisplayBlankGoldenBox
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position
-	else
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	call DisplayBlankGoldenBox
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position
-	endc
+	ld d, $0
+	hlcoord 18 - ZIPCODE_LENGTH, 11 ; Zip Code Position
 	call DisplayZipCode
 	call WaitBGMap
 	; Backup of the zip code, in case the player cancels.
@@ -1334,59 +1292,21 @@ ZipCodePressed:
 	ld b, a
 	ld c, 0
 	push bc
-	
-	; We look for the starting char index. We skip all non-editable chars (those with a charpool length of 1 or 0).
+	ld d, $0
 	ld b, $0
-	ld d, -1
-.check_editable_char_loop
-	inc d
-	ld a, [wZipcodeFormatLength]
-	cp d
-	jp z, ZipCodeEditMenu ; None of the chars of this zipcode format are editable (EU-AD only), so we automatically save it and quit.
-	jp c, ZipCodeEditMenu ; None of the chars of this zipcode format are editable (EU-AD only), so we automatically save it and quit.
-
-	call Zipcode_GetCharPoolLengthForGivenCharSlot
-	cp 2
-	jr c, .check_editable_char_loop
-
 
 ZipCodeEditMenu:
-	if DEF(_CRYSTAL_AU)	
-	hlcoord 12 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	ld a, ZIPCODE_LENGTH
-	ld c, a
-	ld b, 0
-	ld a, " "
-	call ByteFill ; fill bc bytes with the value of a, starting at hl
-	ld b, e
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 10 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	ld a, ZIPCODE_LENGTH
-	ld c, a
-	ld b, 0
-	ld a, " "
-	call ByteFill ; fill bc bytes with the value of a, starting at hl
-	ld b, e	
-	else
-	hlcoord 11 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	ld a, ZIPCODE_LENGTH
-	ld c, a
-	ld b, 0
-	ld a, " "
-	call ByteFill ; fill bc bytes with the value of a, starting at hl
-	ld b, e
-	endc
 	push bc
 	call JoyTextDelay
 	ldh a, [hJoyDown]
 	and a
-	jp z, InputZipcodeCharacters_B0 ; If no button is pressed, jump to InputZipcodeCharacters_B0.
+	jp z, Function4896e ; If no button is pressed, jump to Function4896e.
 
 	bit A_BUTTON_F, a
-	jp nz, InputZipcodeCharacters_B0 ; If button A is pressed, jump to InputZipcodeCharacters_B0.
+	jp nz, Function4896e ; If button A is pressed, jump to Function4896e.
 
 	bit B_BUTTON_F, a
-	jp nz, InputZipcodeCharacters_B0 ; If button B is pressed, jump to InputZipcodeCharacters_B0.
+	jp nz, Function4896e ; If button B is pressed, jump to Function4896e.
 
 	ld a, [wd002]
 	and %11001111
@@ -1395,10 +1315,44 @@ ZipCodeEditMenu:
 	pop bc ; On the first loop, B contains 0 and C contains [wZipCode + 1]
 	inc b ; Converts b from 0-index to 1-index.
 	ld a, b
+	cp $5
+	push bc
+	jr c, .b_ceiled
+
+	pop bc
+	ld b, $4 ; Min(b, 4).
+	push bc
+.b_ceiled
+	pop bc
+	push bc
+	ld a, b
+	cp $4
+	jr nz, asm_48972 ; If b is within [0;3], jump to asm_48972.
+
+	ld c, 10
+	call DelayFrames
+	jr asm_48972
+
+Function4895a: ; unreferenced
+	ldh a, [hJoyPressed]
+	and a
+	jr z, .asm_48965
+
+	pop bc
+	ld b, $1
 	push bc
 	jr asm_48972
 
-InputZipcodeCharacters_B0:
+.asm_48965
+	ldh a, [hJoyLast]
+	and a
+	jr z, asm_48972
+
+	pop bc
+	ld b, $1
+	push bc
+
+Function4896e:
 	pop bc
 	ld b, $0
 	push bc
@@ -1411,16 +1365,8 @@ asm_48972:
 	ld e, d
 	ld d, $0
 	ld b, $71; Y. Supposed to be $70 with GFX_underscore.
-	if DEF(_CRYSTAL_AU)	
-	ld c, (20 - ZIPCODE_LENGTH + 1) * 8; X.
-	elif DEF(_CRYSTAL_EU)	
-	ld c, (19 - ZIPCODE_LENGTH + 1) * 8; X.	
-	else
-	ld c, (16 - ZIPCODE_LENGTH + 1) * 8; X.
-	endc
-	if DEF(_CRYSTAL_EU)
+	ld c, (18 - ZIPCODE_LENGTH + 1) * 8; X.
 	call Mobile12_MoveAndBlinkCursor
-	endc
 	;farcall Mobile22_MoveAndBlinkCursor
 	pop de
 	pop af
@@ -1439,11 +1385,7 @@ asm_48972:
 	ld [wd002], a
 
 .regular_blinking
-	if DEF(_CRYSTAL_AU)	
-	hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip code location
-	else
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip code location
-	endc
+	hlcoord 18 - ZIPCODE_LENGTH, 11 ; Zip code location
 	ld b, $0
 	ld c, d
 	add hl, bc
@@ -1512,17 +1454,11 @@ endr
 	pop bc
 	pop af
 	call ExitMenu
+	hlcoord 18 - ZIPCODE_LENGTH, 11 ; Zip Code location
 	call DisplayZipCodeRightAlign
-	if DEF(_CRYSTAL_AU)
-	hlcoord 17, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
-	ld a, 6 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 9, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
+	hlcoord 8, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
+
 	ld a, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-	else
-	hlcoord 9, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
-	ld a, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-	endc
 	add b ; We increase the clearbox width, in case the zipcode has been shifted to the right.
 	ld c, a
 	ld b, 1
@@ -1531,46 +1467,9 @@ endr
 	ldh [hInMenu], a
 	jp ReturnToMobileProfileMenu
 
-; Input: B = left offset.
 DisplayZipCodeRightAlign:
-	xor a
-	ldh [hInMenu], a ; Bypassing the regular control of this value.
-
-	push de
-	; We first clear the area.
-	if DEF(_CRYSTAL_AU)
-	hlcoord 14 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	ld a, ZIPCODE_LENGTH
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	ld a, ZIPCODE_LENGTH
-	else
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	ld a, ZIPCODE_LENGTH
-	endc
-	ld c, a
-	ld b, 0
-	ld a, " "
-	call ByteFill ; fill bc bytes with the value of a, starting at hl
-	ld b, e
-
-	; Aligning to the right, based on wZipcodeFormatLength.
-	if DEF(_CRYSTAL_AU)
-	hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	else
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
-	endc
-	ld a, [wZipcodeFormatLength]
-    ld b, a
-    ld a, ZIPCODE_LENGTH
-    sub b
-    ld e, a
-    ld d, 0
-    ;add hl, de ; Shifting HL coord to the right, based on wZipcodeFormatLength. It's so that the zipcode stays aligned to the right.
-
 	call CountZipcodeRightBlanks
+	push de
 	ld d, 0
 	ld e, a
 	add hl, de
@@ -1580,92 +1479,42 @@ DisplayZipCodeRightAlign:
 
 	jr DisplayZipCodeWithOffset
 
-; Input: HL contains the coords (using hlcoord) on the screen of the first char (leftmost) of the zipcode. B = left offset.
-; Output: the number of blanks on the right in B. This is the equivalent of the desired left offset.
+; Input: HL contains the coords (using hlcoord) on the screen of the first char (leftmost) of the zipcode.
+; Output: the number of blanks on the right in B.
 DisplayZipCode:
 	ld b, 0
 DisplayZipCodeWithOffset:
 	push de
-
-	push hl
-	call GB_Zipcode_Exception_Prepass
-	pop hl
-
 	ld de, 0
-	ld a, [wZipcodeFormatLength]
-	sub b ; Note that B must always be strictly smaller than ZIPCODE_LENGTH.
-	ld c, a
 
 .loop
+	push bc
+	ld a, ZIPCODE_LENGTH
+	sub b ; Note that B should, must and will always be strictly smaller than ZIPCODE_LENGTH.
+	ld c, a
 	ld a, e
 	cp c
+	pop bc
 	jr nc, .end_loop
 
 	push hl
 	ld hl, wZipCode
-	ld d, 0
 	add hl, de ; We get the zipcode char offset.
 	ld a, [hl]
 	pop hl
 
-	ld d, e
 	call Mobile12_Index2CharDisplay
-	inc e
-	
-	ldh a, [hInMenu]
-	and a
-	jr nz, .inc_screen_coord ; When the user is in a menu, it means they're editing the zipcode. WHen editing it, we shouldn't skip double spaces as it will break the input system.
-
-	ld a, [hl]
-	cp " "
-	jr nz, .inc_screen_coord
-
-	ld a, [wZipcodeMultipleNonConsecutiveSpace]
-	and a
-	jr z, .check_for_double_spaces
-
-	; wZipcodeMultipleNonConsecutiveSpace was set to TRUE.
-	xor a
-	ld [wZipcodeMultipleNonConsecutiveSpace], a
-	jr .loop
-
-.check_for_double_spaces
-	dec hl
-	ld a, [hli]
-	cp " "
-	jr z, .loop ; If 2 spaces are in a row, we don't increase the screen coordinate, so that the second space will be overridden by the next char on the next loop.
-
-.inc_screen_coord
 	inc hl
+
+	inc e
 	jr .loop
 
 .end_loop
 	pop de
 	ret
 
-GB_Zipcode_Exception_Prepass:
-	xor a
-	ld [wZipcodeMultipleNonConsecutiveSpace], a
-
-	ld d, 2
-	ld hl, wZipCode + 2
-	ld a, [hl]
-
-	call Mobile12_Index2Char
-	cp " "
-	ret nz
-
-	ld d, 4
-	ld hl, wZipCode + 4
-	ld a, [hl]
-
-	call Mobile12_Index2Char
-	cp " "
-	ret nz
-
-	ld a, 1
-	ld [wZipcodeMultipleNonConsecutiveSpace], a
-	ret
+String_48a38:
+	db "-@" ; Unused
 
 TellNowTellLaterMenu:
 	ld hl, MenuHeader_0x48a9c
@@ -1673,15 +1522,15 @@ TellNowTellLaterMenu:
 	call SetCursorParameters_Gender
 	ld a, $a
 	ld [w2DMenuCursorInitY], a
-	ld a, $8 ; Y Placement of 'Tell Now' 'Tell Later' Cursor
+	ld a, $7 ; Y Placement of 'Tell Now' 'Tell Later' Cursor
 	ld [w2DMenuCursorInitX], a
 	ld a, $1 ; X Placement of 'Later' Cursor
 	ld [wMenuCursorY], a
-	hlcoord 7, 8 ; Placement of 'Tell Now' 'Tell Later' Box
+	hlcoord 6, 8 ; Placement of 'Tell Now' 'Tell Later' Box
 	ld b, $4
-	ld c, $b
+	ld c, $c
 	call DisplayBlankGoldenBox
-	hlcoord 9, 10 ; Placement of 'Tell Now' 'Tell Later' Text
+	hlcoord 8, 10 ; Placement of 'Tell Now' 'Tell Later' Text
 	ld de, TellNowLaterStrings
 	call PlaceString
 	call StaticMenuJoypad ; Waits for a user input from the input filter.
@@ -1694,8 +1543,6 @@ TellNowTellLaterMenu:
 	ld a, [wMenuCursorY]
 	cp $1
 	jr z, .a_pressed ; The player pressed "Tell later".
-	
-.pressed_tell_later
 	ld a, [wMobileProfileParametersFilled]
 	set 3, a
 	ld [wMobileProfileParametersFilled], a
@@ -1717,7 +1564,7 @@ TellNowTellLaterMenu:
 
 MenuHeader_0x48a9c:
 	db MENU_BACKUP_TILES ; flags
-	menu_coords 6, 8, SCREEN_WIDTH - 1, 13 ; For clearing the 'Tell Later' 'Tell Now' Box
+	menu_coords 5, 8, SCREEN_WIDTH - 1, 13 ; For clearing the 'Tell Later' 'Tell Now' Box
 
 TellNowLaterStrings:
 	db   "Tell Now"
@@ -1756,13 +1603,7 @@ InputZipcodeCharacters: ; Function48ab5. Zip code menu controls.
 	jr nz, .press_right
 
 	; If we reach this line, it means the player didn't press any button this frame.
-	if DEF(_CRYSTAL_AU)
-	hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip Code Location
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Location
-	else
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Location
-	endc
+	hlcoord 18 - ZIPCODE_LENGTH, 11 ; Zip Code Location
 	call DisplayZipCode
 	ld a, [wd002]
 	bit 7, a
@@ -1784,19 +1625,9 @@ InputZipcodeCharacters: ; Function48ab5. Zip code menu controls.
 .no_underflow
 	push de
 	push af
-	if DEF(_CRYSTAL_AU)
-	hlcoord 16 - ZIPCODE_LENGTH, 10
+	hlcoord 17 - ZIPCODE_LENGTH, 10
 	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	else
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	endc
+	ld c, ZIPCODE_LENGTH + ZIPCODE_FRAME_RIGHT_MARGIN; Zip Code Menu width
 	call DisplayBlankGoldenBox
 	pop af
 	pop de
@@ -1804,7 +1635,6 @@ InputZipcodeCharacters: ; Function48ab5. Zip code menu controls.
 	ld [hl], a
 	ld a, $f0 ; Return value. It means the last input was up or down (zip code value changed).
 	jp DisplayZipCodeAfterChange
-
 .press_up ; press up, zip code number menu
 	call Zipcode_GetCharPoolLengthForGivenCharSlot
 	ld e, a
@@ -1817,36 +1647,16 @@ InputZipcodeCharacters: ; Function48ab5. Zip code menu controls.
 
 .press_right
 	push de
-	if DEF(_CRYSTAL_AU)
-	hlcoord 16 - ZIPCODE_LENGTH, 10
+	hlcoord 17 - ZIPCODE_LENGTH, 10
 	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	else
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	endc
+	ld c, ZIPCODE_LENGTH + ZIPCODE_FRAME_RIGHT_MARGIN; Zip Code Menu width
 	call DisplayBlankGoldenBox
 	pop de
-	ld a, [wZipcodeFormatLength]
-	dec a
-	cp d ; Limits how far you can press D_RIGHT
-	jr c, .end_right_increase ; useless, but kept in case the memory got corrupted.
-	jr z, .end_right_increase
-
-.increase_once
+	ld a, d
+	cp ZIPCODE_LENGTH - 1 ; Limits how far you can press D_RIGHT
+	jr nc, .asm_48baf
 	inc d
-	inc hl
-	call Zipcode_GetCharPoolLengthForGivenCharSlot
-	cp 2
-	jr c, .increase_once 
-
-	dec hl
-.end_right_increase
+.asm_48baf
 	pop af
 	pop hl
 	inc hl
@@ -1864,51 +1674,25 @@ InputZipcodeCharacters: ; Function48ab5. Zip code menu controls.
 
 .press_left
 	push de
-	if DEF(_CRYSTAL_AU)
-	hlcoord 16 - ZIPCODE_LENGTH, 10
+	hlcoord 17 - ZIPCODE_LENGTH, 10
 	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	else
-	hlcoord 18 - ZIPCODE_LENGTH, 10
-	ld b, $1 ; Zip Code Menu starting point
-	ld c, ZIPCODE_LENGTH; Zip Code Menu width
-	endc
+	ld c, ZIPCODE_LENGTH + ZIPCODE_FRAME_RIGHT_MARGIN; Zip Code Menu width
 	call DisplayBlankGoldenBox
 	pop de
-	pop af
-	pop hl
-	ld b, a ; Zip code char.
 	ld a, d
 	and a
-	jr z, .skip_left_decrease
-
-	;ld a, b
-	;bit 7, a
-	;jr z, .asm_48bf8
-
-	push de
-	push hl
-.decrease_once
-	dec hl
+	pop af
+	pop hl
+	ld b, a
+	ld a, d
+	and a
+	ld a, b
+	jr z, .asm_48bf3
+	bit 7, a
+	jr z, .asm_48bf8
 	dec d
-	ld a, d
-	cp -1
-	jr z, .cancel_left_decrease
-
-	call Zipcode_GetCharPoolLengthForGivenCharSlot
-	cp 2
-	jr c, .decrease_once 
-
-	ld a, d
-	pop de
-	pop de
-	ld d, a
-
-.skip_left_decrease
+	dec hl
+.asm_48bf3
 	ld a, [hl]
 	and $f
 	jr .asm_48bc7
@@ -1919,56 +1703,23 @@ InputZipcodeCharacters: ; Function48ab5. Zip code menu controls.
 	and $f
 	jr .asm_48bc7
 
-.cancel_left_decrease
-	pop hl
-	pop de
-	jr .skip_left_decrease
-
 ; Input in D: char slot index.
 ; Output in A: char pool length of the given char slot in input.
 Zipcode_GetCharPoolLengthForGivenCharSlot:
 	push hl
 	push de
-	push bc
-
-	ld hl, Zipcode_CharPool_Formats
-	ld a, [wZipcodeFormat]
-	add a ; dw
-	ld c, a
-	ld b, 0
-	add hl, bc
-	
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a ; HL now points to the zipcode format structure.
-
+	ld hl, Zipcode_CharPoolsLength
 	ld e, d
 	ld d, 0
 	add hl, de
-	ld a, [hl] ; A contains the index of the used charpool.
-
-	ld hl, Zipcode_CharPools + 2 ; HL points to the charpool length list.
-	ld e, a
-	add a
-	add e 
-	ld e, a ; dwb
-	add hl, de
-	ld a, [hl] ; A contains the length of the charpool we are looking for.
-
-	pop bc
+	ld a, [hl] ; length of the array.
 	pop de
 	pop hl
 	ret
 
 DisplayZipCodeAfterChange:
 	push af
-	if DEF(_CRYSTAL_AU)
-	hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip code location
-	elif DEF(_CRYSTAL_EU)
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip code location
-	else
-	hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip code location
-	endc
+	hlcoord 18 - ZIPCODE_LENGTH, 11 ; Zip code location
 	call DisplayZipCode
 	ld a, $1
 	and a
@@ -2131,32 +1882,11 @@ Fill_HL_with_A_C_times:
 
 ; Input: BC: coords of the cursor under the first PIN char. D: contains the tile ID. E: index of the char.
 Mobile12_MoveAndBlinkCursor:
-	ld a, [wPrefecture]
-	cp $10 ; EU-GB special case.
-	jr nz, .hide_cursor
-
-	ld a, e
-	cp 2
-	jr c, .hide_cursor
-
-	push hl
-	push bc
-	ld hl, wZipCode
-	ld b, 0
-	ld c, a
-	add hl, bc
-	ld a, [hl]
-	cp 36
-	pop bc
-	pop hl
-	jr nz, .hide_cursor
-
 	;call Mobile22_IncCursorFrameCounter
 	ld a, [wd002]
 	bit 4, a
 	jr z, .skip_cursor_hiding
 
-.hide_cursor
 	push de
 	farcall Mobile22_Clear24FirstOAM
 	pop de
@@ -2187,39 +1917,6 @@ Mobile12_MoveAndBlinkCursor:
 	ld [hli], a ; attributes
 	ret
 
-; Input: In A, the char index in the zipcode string between 0 and ZIPCODE_LENGTH.
-; Output: Address in HL.
-; Clobbers DE.
-GetCurCharpoolAddress:
-	push af
-	ld a, [wZipcodeFormat]
-	add a ; dw
-	ld e, a
-	ld d, 0
-	ld hl, Zipcode_CharPool_Formats
-	add hl, de
-
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-	pop af
-
-	ld e, a ; db
-	add hl, de ; HL shifted by the index in the charpool (from 0 to ZIPCODE_LENGTH).
-	ld a, [hl] ; A contains the index of the used char pool.
-
-	ld hl, Zipcode_CharPools
-	ld e, a
-	add a
-	add e ; We multiply A by 3, as we are going through a dwb list.
-	ld e, a
-	add hl, de
-
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a ; HL points to the used charpool.
-	ret
-
 ; Output: in A: the number of blank chars at the right of the zipcode.
 CountZipcodeRightBlanks:
 	push hl
@@ -2227,10 +1924,7 @@ CountZipcodeRightBlanks:
 	push bc
 
 	ld d, 0
-	ld a, [wZipcodeFormatLength]
-	dec a
-	ld e, a
-	;ld e, ZIPCODE_LENGTH - 1
+	ld e, ZIPCODE_LENGTH - 1
 
 	ld b, 0 ; B is the counter.
 
@@ -2242,35 +1936,26 @@ CountZipcodeRightBlanks:
 	add a ; We double the index to find its position within the array.
 	ld c, a ; Save the index in C for future use.
 
-	ld a, e
+	ld hl, Zipcode_CharPools
 	push de
-	call GetCurCharpoolAddress
-	;pop de
-	;push de
-	;add hl, de ; Get the char pool for the current zipcode char.
-	;ld a, [hli]
-	;ld h, [hl]
-	;ld l, a ; We have the address of the current char pool in HL.
+	add hl, de ; Get the char pool for the current zipcode char.
+	pop de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a ; We have the address of the current char pool in HL.
 
-	ld d, 0
+	push de
 	ld e, c ; We retrieve our zipcode char index (already multiplied by 2).
 	add hl, de
 	ld a, [hl] ; A contains the current zipcode char value.
 	pop de
 
-	;dec e ; Preparing for the next (actually previous) char loop.
-	;inc b ; Increase the number of found blanks.
-	;cp " "
-	;jr z, .loop ; As long as we find blanks, we keep searching for some more.
-	;
-	;dec b ; We increased B on the last loop even though a blank hasn't been found. So we need to negate it by decreasing B.
-	
-	;ld a, [wZipcodeFormatLength]
-	;ld e, a
-	;ld a, ZIPCODE_LENGTH
-	;sub e
-	;add b ; Return value goes into A.
+	dec e ; Preparing for the next (actually previous) char loop.
+	inc b ; Increase the number of found blanks.
+	cp " "
+	jr z, .loop ; As long as we find blanks, we keep searching for some more.
 
+	dec b ; We increased B on the last loop even though a blank hasn't been found. So we need to negate it by decreasing B.
 	ld a, b ; Return value goes into A.
 	pop bc
 	pop de
@@ -2294,19 +1979,18 @@ SaveZipcodeWithUniversalFormat:
 	call ByteFill
 
 	ld hl, wZipCode
-	ld c, 0
+	ld bc, 0
 	ld d, 0
-	xor a
 .loop
 	ld e, [hl]
 	push hl
-
-	; Input: In A, the char index in the zipcode string between 0 and ZIPCODE_LENGTH.
-	; Output: Address in HL.
-	; Clobbers DE.
-	push de
-	call GetCurCharpoolAddress
-	pop de
+	ld hl, Zipcode_CharPools
+	add hl, bc
+	add hl, bc
+	
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
 
 	add hl, de
 	ld a, [hl]

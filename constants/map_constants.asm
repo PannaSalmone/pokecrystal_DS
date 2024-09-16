@@ -84,7 +84,7 @@ ENDM
 	map_const RADIO_TOWER_3F,                               9,  4 ; 19
 	map_const RADIO_TOWER_4F,                               9,  4 ; 20
 	map_const RADIO_TOWER_5F,                               9,  4 ; 21
-	map_const RUINS_OF_ALPH_OUTSIDE,                       10, 18 ; 22
+	map_const RUINS_OF_ALPH_OUTSIDE,                       13, 19 ; 22
 	map_const RUINS_OF_ALPH_HO_OH_CHAMBER,                  4,  5 ; 23
 	map_const RUINS_OF_ALPH_KABUTO_CHAMBER,                 4,  5 ; 24
 	map_const RUINS_OF_ALPH_OMANYTE_CHAMBER,                4,  5 ; 25
@@ -165,7 +165,7 @@ ENDM
 	map_const ECRUTEAK_MART,                                6,  4 ;  6
 	map_const ECRUTEAK_GYM,                                 5,  9 ;  7
 	map_const ECRUTEAK_ITEMFINDER_HOUSE,                    4,  4 ;  8
-	map_const ECRUTEAK_CITY,                               20, 18 ;  9
+	map_const ECRUTEAK_CITY,                               20, 18 ;  9	
 	endgroup
 
 	newgroup BLACKTHORN                                           ;  5
@@ -178,7 +178,7 @@ ENDM
 	map_const MOVE_DELETERS_HOUSE,                          4,  4 ;  7
 	map_const ROUTE_45,                                    10, 45 ;  8
 	map_const ROUTE_46,                                    10, 18 ;  9
-	map_const BLACKTHORN_CITY,                             20, 18 ; 10
+	map_const BLACKTHORN_CITY,                             20, 19 ; 10
 	endgroup
 
 	newgroup CINNABAR                                             ;  6
@@ -269,7 +269,7 @@ ENDM
 	map_const GOLDENROD_DEPT_STORE_5F,                      8,  4 ; 15
 	map_const GOLDENROD_DEPT_STORE_6F,                      8,  4 ; 16
 	map_const GOLDENROD_DEPT_STORE_ELEVATOR,                2,  2 ; 17
-	map_const GOLDENROD_DEPT_STORE_ROOF,                    8,  4 ; 18
+	map_const GOLDENROD_DEPT_STORE_ROOF,                    8,  6 ; 18
 	map_const GOLDENROD_GAME_CORNER,                       10,  7 ; 19
 	map_const GOLDENROD_POKECENTER_1F,                     16, 16 ; 20
 	map_const POKECOM_CENTER_ADMIN_OFFICE_MOBILE,          16, 16 ; 21
@@ -488,7 +488,7 @@ ENDM
 	endgroup
 
 	newgroup CHERRYGROVE                                          ; 26
-	map_const ROUTE_30,                                    10, 27 ;  1
+	map_const ROUTE_30,                                    11, 27 ;  1
 	map_const ROUTE_31,                                    20,  9 ;  2
 	map_const CHERRYGROVE_CITY,                            20,  9 ;  3
 	map_const CHERRYGROVE_MART,                             6,  4 ;  4
@@ -499,6 +499,11 @@ ENDM
 	map_const ROUTE_30_BERRY_HOUSE,                         4,  4 ;  9
 	map_const MR_POKEMONS_HOUSE,                            4,  4 ; 10
 	map_const ROUTE_31_VIOLET_GATE,                         5,  4 ; 11
+	map_const CHERRYGROVE_PATH, 							15, 19 ;12
 	endgroup
-
-DEF NUM_MAP_GROUPS EQU const_value ; 26
+	
+	newgroup SHRINE											   ;27
+	map_const ECRUTEAK_SHRINE, 								14, 19; 1
+	endgroup
+	
+DEF NUM_MAP_GROUPS EQU const_value ; 27

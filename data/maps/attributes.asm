@@ -101,9 +101,14 @@ ENDM
 	connection west, Route29, ROUTE_29, 0
 	connection east, Route27, ROUTE_27, 0
 
-	map_attributes CherrygroveCity, CHERRYGROVE_CITY, $35, NORTH | EAST
-	connection north, Route30, ROUTE_30, 5
-	connection east, Route29, ROUTE_29, 0
+	map_attributes CherrygroveCity, CHERRYGROVE_CITY, $35, NORTH | WEST | EAST
+	connection north, Route30, ROUTE_30, 4
+	connection west, CherrygrovePath, CHERRYGROVE_PATH, -9
+	connection east, Route29, ROUTE_29, 0	
+	
+	map_attributes CherrygrovePath, CHERRYGROVE_PATH, $05, WEST | EAST
+	connection west, Route32, ROUTE_32, -18
+	connection east, CherrygroveCity, CHERRYGROVE_CITY, 9
 
 	map_attributes VioletCity, VIOLET_CITY, $05, SOUTH | WEST | EAST
 	connection south, Route32, ROUTE_32, 0
@@ -162,15 +167,16 @@ ENDM
 
 	map_attributes Route30, ROUTE_30, $05, NORTH | SOUTH
 	connection north, Route31, ROUTE_31, -10
-	connection south, CherrygroveCity, CHERRYGROVE_CITY, -5
+	connection south, CherrygroveCity, CHERRYGROVE_CITY, -4
 
 	map_attributes Route31, ROUTE_31, $05, SOUTH | WEST
 	connection south, Route30, ROUTE_30, 10
 	connection west, VioletCity, VIOLET_CITY, -9
 
-	map_attributes Route32, ROUTE_32, $05, NORTH | SOUTH
+	map_attributes Route32, ROUTE_32, $05, NORTH | SOUTH | EAST
 	connection north, VioletCity, VIOLET_CITY, 0
 	connection south, Route33, ROUTE_33, 0
+	connection east, CherrygrovePath, CHERRYGROVE_PATH, 18
 
 	map_attributes Route33, ROUTE_33, $05, NORTH | WEST
 	connection north, Route32, ROUTE_32, 0
@@ -695,3 +701,5 @@ ENDM
 	map_attributes Route30BerryHouse, ROUTE_30_BERRY_HOUSE, $00, 0
 	map_attributes MrPokemonsHouse, MR_POKEMONS_HOUSE, $00, 0
 	map_attributes Route31VioletGate, ROUTE_31_VIOLET_GATE, $00, 0
+	map_attributes EcruteakShrine, ECRUTEAK_SHRINE, $05, 0
+	

@@ -1,8 +1,8 @@
 DEF NAMINGSCREEN_CURSOR     EQU $7e
 
-DEF NAMINGSCREEN_BORDER     EQU "■" ; $60
+DEF NAMINGSCREEN_BORDER     EQU "■" ; $d7
 DEF NAMINGSCREEN_MIDDLELINE EQU "→" ; $eb
-DEF NAMINGSCREEN_UNDERLINE  EQU "<DOT>" ; $f2
+DEF NAMINGSCREEN_UNDERLINE  EQU "☎" ; $d9
 
 _NamingScreen:
 	call DisableSpriteUpdates
@@ -86,6 +86,29 @@ NamingScreen:
 .Pokemon:
 	ld a, [wCurPartySpecies]
 	ld [wTempIconSpecies], a
+; Is it a PartyMon or a BoxMon?
+	ld a, [wMonType]
+	and a
+	jr z, .party_mon
+
+	ld hl, sBoxMon1DVs
+	ld a, BANK(sBox)
+	call OpenSRAM
+	jr .start
+
+.party_mon
+	ld a, MON_DVS
+	call GetPartyParamLocation
+.start
+	ld de, wTempMonDVs
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hl]
+	ld [de], a
+	ld a, [wMonType]
+	cp BOXMON
+	call z, CloseSRAM
 	ld hl, LoadMenuMonIcon
 	ld a, BANK(LoadMenuMonIcon)
 	ld e, MONICON_NAMINGSCREEN
@@ -844,7 +867,7 @@ LoadNamingScreenGFX:
 	lb bc, BANK(NamingScreenGFX_UnderLine), 1
 	call Get1bpp
 
-	ld de, vTiles2 tile NAMINGSCREEN_BORDER
+	ld de, vTiles0 tile NAMINGSCREEN_BORDER
 	ld hl, NamingScreenGFX_Border
 	ld bc, 1 tiles
 	ld a, BANK(NamingScreenGFX_Border)

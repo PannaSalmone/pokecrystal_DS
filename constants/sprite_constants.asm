@@ -70,7 +70,7 @@
 	const SPRITE_RECEPTIONIST ; 42
 	const SPRITE_OFFICER ; 43
 	const SPRITE_CAL ; 44
-	const SPRITE_SLOWPOKE ; 45
+	;const SPRITE_SLOWPOKE ; 45
 	const SPRITE_CAPTAIN ; 46
 	const SPRITE_BIG_LAPRAS ; 47
 	const SPRITE_GYM_GUIDE ; 48
@@ -79,7 +79,7 @@
 	const SPRITE_PHARMACIST ; 4b
 	const SPRITE_MONSTER ; 4c
 	const SPRITE_FAIRY ; 4d
-	const SPRITE_BIRD ; 4e
+	const SPRITE_FARFETCH ;SPRITE_BIRD ; 4e
 	const SPRITE_DRAGON ; 4f
 	const SPRITE_BIG_ONIX ; 50
 	const SPRITE_N64 ; 51
@@ -104,6 +104,9 @@
 	const SPRITE_ENTEI ; 64
 	const SPRITE_RAIKOU ; 65
 	const SPRITE_STANDING_YOUNGSTER ; 66
+	const SPRITE_RATTATA_BACK; 67 (ROUTE30)
+	const SPRITE_KID; 68
+	
 DEF NUM_OVERWORLD_SPRITES EQU const_value - 1
 
 ; SpriteMons indexes (see data/sprites/sprite_mons.asm)
@@ -134,7 +137,7 @@ DEF SPRITE_POKEMON EQU const_value
 	const SPRITE_EKANS ; 96
 	const SPRITE_PARAS ; 97
 	const SPRITE_TENTACOOL ; 98
-	const SPRITE_TAUROS ; 99
+	const SPRITE_MILTANK ; 99
 	const SPRITE_MACHOP ; 9a
 	const SPRITE_VOLTORB ; 9b
 	const SPRITE_LAPRAS ; 9c
@@ -144,6 +147,14 @@ DEF SPRITE_POKEMON EQU const_value
 	const SPRITE_GYARADOS ; a0
 	const SPRITE_LUGIA ; a1
 	const SPRITE_HO_OH ; a2
+	const SPRITE_PIDGEY	;(route 30)
+	const SPRITE_SLOWPOKE;
+	const SPRITE_PERSIAN;
+	const SPRITE_CHANSEY;
+	const SPRITE_HOOTHOOT; (shrine ecruteak)
+	const SPRITE_AMPHAROS; (lighthouse)
+	const SPRITE_MURKROW; (Mahogany rocket base)
+	
 DEF NUM_POKEMON_SPRITES EQU const_value - SPRITE_POKEMON
 
 ; special GetMonSprite values (see engine/overworld/overworld.asm)
@@ -157,10 +168,7 @@ DEF SPRITE_VARS EQU const_value
 	const SPRITE_CONSOLE ; f0
 	const SPRITE_DOLL_1 ; f1
 	const SPRITE_DOLL_2 ; f2
-	const SPRITE_BIG_DOLL ; f3
-	const SPRITE_WEIRD_TREE ; f4
-	const SPRITE_OLIVINE_RIVAL ; f5
-	const SPRITE_AZALEA_ROCKET ; f6
+	const SPRITE_BIG_DOLL ; f3	
 	const SPRITE_FUCHSIA_GYM_1 ; f7
 	const SPRITE_FUCHSIA_GYM_2 ; f8
 	const SPRITE_FUCHSIA_GYM_3 ; f9

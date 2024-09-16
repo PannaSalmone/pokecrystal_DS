@@ -1,0 +1,54 @@
+#Increase Pokémon sprite animation size
+-ram/vram.asm
+-ram/sram.asm
+-engine/gfx/load_pics.asm
+-engine/gfx/pic_animation.asm
+
+
+#Kanto badges page + show heads trainer card + colored badges
+-constants/scgb_constants.asm
+-engine/gfx/sgb_layouts.asm
+-engine/gfx/cgb_layouts.asm
+-engine/menus/trainer_card.asm
+
+#icon party for every pokemon + unown forms
+-gfx/icons.asm
+-constants/icon_constants.asm
+-data/icon_pointers.asm
+-data/pokemon/menu_icons.asm
+-engine/gfx/mon_icons.asm
+
+#colored pokeballs
+-data/battle_anims/ball_colors.asm
+-engine/battle_anims/functions.asm
+-engine/battle_anims/helpers.asm
+
+#expanded tileset from 192 to 255 tiles + XY and priority attributes
+charmap.asm
+engine/gfx/load_font.asm
+gfx/font.asm
+engine/events/magikarp.asm
+engine/events/map_name_sign.asm
+
+#Changed party
+HGSS trainer party level (a bit more difficult)
+ 
+
+#Changed sprites by Sour
+gastly 
+caterpie
+swinub
+entei
+weedle
+geodude
+zubat
+bellossom
+butterfree
+Celebi
+grimer
+golbat
+
+#custom tower palette
+
+#new maps:
+Ecruteak Shrine

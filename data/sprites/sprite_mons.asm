@@ -26,7 +26,7 @@ SpriteMons:
 	db EKANS
 	db PARAS
 	db TENTACOOL
-	db TAUROS
+	db MILTANK
 	db MACHOP
 	db VOLTORB
 	db LAPRAS
@@ -36,4 +36,11 @@ SpriteMons:
 	db GYARADOS
 	db LUGIA
 	db HO_OH
+	db PIDGEY
+	db SLOWPOKE
+	db PERSIAN
+	db CHANSEY
+	db HOOTHOOT
+	db AMPHAROS
+	db MURKROW
 	assert_table_length NUM_POKEMON_SPRITES

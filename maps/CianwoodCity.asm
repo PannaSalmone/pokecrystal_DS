@@ -393,7 +393,7 @@ CianwoodCity_MapEvents:
 	coord_event 11, 16, SCENE_CIANWOODCITY_SUICUNE_AND_EUSINE, CianwoodCitySuicuneAndEusine
 
 	def_bg_events
-	bg_event 20, 34, BGEVENT_READ, CianwoodCitySign
+	bg_event 14, 32, BGEVENT_READ, CianwoodCitySign
 	bg_event  7, 45, BGEVENT_READ, CianwoodGymSign
 	bg_event 24, 43, BGEVENT_READ, CianwoodPokecenterSign
 	bg_event 19, 47, BGEVENT_READ, CianwoodPharmacySign

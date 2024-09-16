@@ -12,6 +12,8 @@ LoadSpecialMapPalette:
 	jr z, .radio_tower
 	cp TILESET_MANSION
 	jr z, .mansion_mobile
+	cp TILESET_TOWER
+	jr z, .tower
 	jr .do_nothing
 
 .pokecom_2f
@@ -45,6 +47,11 @@ LoadSpecialMapPalette:
 
 .mansion_mobile
 	call LoadMansionPalette
+	scf
+	ret
+	
+.tower
+	call LoadTowerPalette
 	scf
 	ret
 
@@ -135,3 +142,13 @@ LoadMansionPalette:
 
 MansionPalette2:
 INCLUDE "gfx/tilesets/mansion_2.pal"
+
+LoadTowerPalette:
+	ld a, BANK(wBGPals1)
+	ld de, wBGPals1
+	ld hl, TowerPalette
+	ld bc, 8 palettes
+	jp FarCopyWRAM
+
+TowerPalette:
+INCLUDE "gfx/tilesets/tower.pal"

@@ -10,7 +10,7 @@ OlivineLighthouse6F_MapScripts:
 
 OlivineLighthouseJasmine:
 	faceplayer
-	opentext
+	opentext	
 	checkitem SECRETPOTION
 	iftrue .BroughtSecretpotion
 	checkevent EVENT_JASMINE_EXPLAINED_AMPHYS_SICKNESS
@@ -35,8 +35,7 @@ OlivineLighthouseJasmine:
 	waitbutton
 	closetext
 	turnobject OLIVINELIGHTHOUSE6F_JASMINE, RIGHT
-	pause 15
-	turnobject OLIVINELIGHTHOUSE6F_MONSTER, LEFT
+	pause 15	
 	opentext
 	playmusic MUSIC_HEAL
 	writetext JasmineAmphyHowAreYouFeelingText
@@ -51,15 +50,7 @@ OlivineLighthouseJasmine:
 	opentext
 	writetext AmphyPaluPaluluText
 	waitbutton
-	closetext
-	turnobject OLIVINELIGHTHOUSE6F_MONSTER, RIGHT
-	pause 10
-	turnobject OLIVINELIGHTHOUSE6F_MONSTER, LEFT
-	pause 10
-	turnobject OLIVINELIGHTHOUSE6F_MONSTER, RIGHT
-	pause 10
-	turnobject OLIVINELIGHTHOUSE6F_MONSTER, LEFT
-	pause 10
+	closetext	
 	faceplayer
 	opentext
 	writetext JasmineThankYouText
@@ -100,8 +91,7 @@ OlivineLighthouseJasmine:
 .Unused: ; unreferenced
 	end
 
-OlivineLighthouseAmphy:
-	faceplayer
+OlivineLighthouseAmphy:	
 	opentext
 	checkevent EVENT_JASMINE_RETURNED_TO_GYM
 	iftrue .HealthyNow
@@ -269,5 +259,5 @@ OlivineLighthouse6F_MapEvents:
 
 	def_object_events
 	object_event  8,  8, SPRITE_JASMINE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, OlivineLighthouseJasmine, EVENT_OLIVINE_LIGHTHOUSE_JASMINE
-	object_event  9,  8, SPRITE_MONSTER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, OlivineLighthouseAmphy, -1
+	object_event  9,  8, SPRITE_AMPHAROS, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, OlivineLighthouseAmphy, -1
 	object_event  3,  4, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, OlivineLighthouse6FSuperPotion, EVENT_OLIVINE_LIGHTHOUSE_6F_SUPER_POTION

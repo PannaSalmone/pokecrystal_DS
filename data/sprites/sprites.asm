@@ -75,7 +75,7 @@ OverworldSprites:
 	overworld_sprite ReceptionistSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BLUE
 	overworld_sprite OfficerSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BLUE
 	overworld_sprite CalSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BROWN
-	overworld_sprite SlowpokeSpriteGFX, 4, STILL_SPRITE, PAL_OW_RED
+	;overworld_sprite SlowpokeSpriteGFX, 4, STILL_SPRITE, PAL_OW_RED
 	overworld_sprite CaptainSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BROWN
 	overworld_sprite BigLaprasSpriteGFX, 12, STANDING_SPRITE, PAL_OW_BLUE
 	overworld_sprite GymGuideSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BLUE
@@ -84,7 +84,7 @@ OverworldSprites:
 	overworld_sprite PharmacistSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BLUE
 	overworld_sprite MonsterSpriteGFX, 12, WALKING_SPRITE, PAL_OW_RED
 	overworld_sprite FairySpriteGFX, 12, WALKING_SPRITE, PAL_OW_RED
-	overworld_sprite BirdSpriteGFX, 12, WALKING_SPRITE, PAL_OW_RED
+	overworld_sprite FarfetchSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BROWN
 	overworld_sprite DragonSpriteGFX, 12, WALKING_SPRITE, PAL_OW_RED
 	overworld_sprite BigOnixSpriteGFX, 12, STANDING_SPRITE, PAL_OW_BROWN
 	overworld_sprite N64SpriteGFX, 4, STILL_SPRITE, PAL_OW_BROWN
@@ -109,4 +109,6 @@ OverworldSprites:
 	overworld_sprite EnteiSpriteGFX, 4, STILL_SPRITE, PAL_OW_RED
 	overworld_sprite RaikouSpriteGFX, 4, STILL_SPRITE, PAL_OW_RED
 	overworld_sprite StandingYoungsterSpriteGFX, 12, STANDING_SPRITE, PAL_OW_BLUE
+	overworld_sprite RattataBackSpriteGFX, 12, WALKING_SPRITE, PAL_OW_BLUE
+	overworld_sprite KidSpriteGFX, 12, WALKING_SPRITE, PAL_OW_RED
 	assert_table_length NUM_OVERWORLD_SPRITES

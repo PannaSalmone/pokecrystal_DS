@@ -502,7 +502,7 @@ LakeOfRage_MapEvents:
 
 	def_bg_events
 	bg_event 21, 27, BGEVENT_READ, LakeOfRageSign
-	bg_event 25, 31, BGEVENT_READ, MagikarpHouseSignScript
+	bg_event 28, 31, BGEVENT_READ, MagikarpHouseSignScript
 	bg_event 11, 28, BGEVENT_ITEM, LakeOfRageHiddenFullRestore
 	bg_event  4,  4, BGEVENT_ITEM, LakeOfRageHiddenRareCandy
 	bg_event 35,  5, BGEVENT_ITEM, LakeOfRageHiddenMaxPotion
